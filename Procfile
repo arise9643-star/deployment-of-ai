@@ -1,1 +1,1 @@
-web: uvicorn roast_bot-1:app --host 0.0.0.0 --port $PORT
+web: uvicorn roast_bot:app --host 0.0.0.0 --port $PORT
