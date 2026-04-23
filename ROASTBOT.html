@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RoastBot</title>
+    <style>
+        /* Page setup */
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #ff4444; }
+
+        /* Chat box */
+        #chat-box {
+            width: 600px;
+            height: 400px;
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;  /* scroll when full */
+            margin-bottom: 20px;
+        }
+
+        /* Individual messages */
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .user { background: #333; text-align: right; }
+        .bot  { background: #ff4444; text-align: left; }
+
+        /* Input area */
+        #input-area {
+            display: flex;
+            gap: 10px;
+            width: 600px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #2a2a2a;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 RoastBot</h1>
+    <div id="chat-box"></div>
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="Say something to get roasted..."/>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("user-input")
+            const message = input.value
+            if (!message) return
+
+            // Show user message
+            addMessage(message, "user")
+            input.value = ""
+
+            // Send to your API
+            const response = await fetch("https://deployment-of-ai-production.up.railway.app/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: message})
+            })
+
+            const data = await response.json()
+            addMessage(data.reply, "bot")
+        }
+
+        function addMessage(text, sender) {
+            const box = document.getElementById("chat-box")
+            const div = document.createElement("div")
+            div.className = `message ${sender}`
+            div.textContent = text
+            box.appendChild(div)
+            box.scrollTop = box.scrollHeight  // auto scroll down
+        }
+
+        // Send on Enter key
+        document.getElementById("user-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") sendMessage()
+        })
+    </script>
+</body>
+</html>

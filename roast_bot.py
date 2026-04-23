@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # ← add this
 from pydantic import BaseModel
 import groq
 import os
@@ -7,6 +8,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
+
+# ← add this block
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow requests from anywhere
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 client = groq.Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 conversation_history = [
